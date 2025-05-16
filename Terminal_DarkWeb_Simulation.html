@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Terminal Dark Web Simulation - Loop Enabled</title>
+  <title>Terminal Dark Web Simulation - Fixed Loop</title>
   <style>
     body {
       margin: 0;
@@ -69,7 +69,6 @@
 
   <script>
     const terminalEl = document.getElementById("terminal");
-    const textEl = document.getElementById("text");
 
     const browserHTML = `
 <div class='browser'>
@@ -101,6 +100,7 @@
 
     let stepIndex = 0;
     let charIndex = 0;
+    let textEl = document.getElementById("text");
 
     function typeStep() {
       if (stepIndex >= steps.length) {
@@ -137,9 +137,9 @@
 
     function resetTerminal() {
       terminalEl.innerHTML = "<span id='text'></span><span class='cursor'></span>";
+      textEl = document.getElementById("text"); // FIX: rebind the text element
       stepIndex = 0;
       charIndex = 0;
-      textEl = document.getElementById("text");
     }
 
     typeStep();
