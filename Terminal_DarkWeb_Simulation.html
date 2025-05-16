@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Terminal Dark Web Simulation - Loop Enabled</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #00ff88;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .terminal {
+      width: 90vw;
+      height: 90vh;
+      background: #000;
+      border: 2px solid #00ff88;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.5em;
+    }
+
+    .browser {
+      background-color: #111;
+      border: 2px solid #00ff88;
+      padding: 15px;
+      margin-top: 15px;
+      width: 100%;
+    }
+
+    .browser-title {
+      color: #00ffe7;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 18px;
+      background: #00ff88;
+      margin-left: 5px;
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .search-results {
+      margin-top: 10px;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal" id="terminal"><span id="text"></span><span class="cursor"></span></div>
+
+  <script>
+    const terminalEl = document.getElementById("terminal");
+    const textEl = document.getElementById("text");
+
+    const browserHTML = `
+<div class='browser'>
+  <div class='browser-title'>Candle Dark Web Search</div>
+  candles.onion/search?q=<span style="color:#ffaa00;">anonymous forums</span><br><br>
+  <div class='search-results'>
+    [1] http://darkforumxyz123.onion - Encrypted anonymous forums<br>
+    [2] http://shadowboardabc.onion - Deepweb discussion board<br>
+    [3] http://onionchat456.onion - P2P chat platform<br>
+  </div>
+</div>
+`;
+
+    const steps = [
+      "user@host$ sudo protonvpn connect\n",
+      "Connecting to ProtonVPN...\nUsername: ",
+      "cyberuser\nPassword: ********\nAuthentication successful.\nVPN connection <established>.\n\n",
+
+      "user@host$ vm-run tails\n",
+      "Launching Tails Virtual Machine...\nUsername: ",
+      "anonymous\nPassword: ********\nBooting Tails OS...\nTails OS <ready>.\n\n",
+
+      "tails@vm$ tor-browser-launch\n",
+      "Starting Tor Browser...\nConnecting to relays:\n→ Entry Node\n→ Middle Node\n→ Exit Node\nTor Network <connected>.\n\n",
+
+      "Launching Candle dark web search engine...\n",
+      "<browser>\n"
+    ];
+
+    let stepIndex = 0;
+    let charIndex = 0;
+
+    function typeStep() {
+      if (stepIndex >= steps.length) {
+        // Wait then restart
+        setTimeout(() => {
+          resetTerminal();
+          typeStep();
+        }, 7000);
+        return;
+      }
+
+      const step = steps[stepIndex];
+
+      if (step === "<browser>\n") {
+        const container = document.createElement("div");
+        container.innerHTML = browserHTML;
+        terminalEl.appendChild(container);
+        terminalEl.scrollTop = terminalEl.scrollHeight;
+        stepIndex++;
+        setTimeout(typeStep, 1000);
+        return;
+      }
+
+      if (charIndex < step.length) {
+        textEl.innerHTML += step.charAt(charIndex);
+        charIndex++;
+        setTimeout(typeStep, 25);
+      } else {
+        stepIndex++;
+        charIndex = 0;
+        setTimeout(typeStep, 800);
+      }
+    }
+
+    function resetTerminal() {
+      terminalEl.innerHTML = "<span id='text'></span><span class='cursor'></span>";
+      stepIndex = 0;
+      charIndex = 0;
+      textEl = document.getElementById("text");
+    }
+
+    typeStep();
+  </script>
+</body>
+</html>
