@@ -1,8 +1,7 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Terminal Dark Web Simulation - Fixed Loop</title>
+  <title>Terminal Dark Web Simulation - Candle Search Challenge</title>
   <style>
     body {
       margin: 0;
@@ -35,12 +34,52 @@
       padding: 15px;
       margin-top: 15px;
       width: 100%;
+      text-align: center;
     }
 
     .browser-title {
       color: #00ffe7;
+      font-size: 24px;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-box {
+      display: inline-block;
+      border: 2px solid #00ff88;
+      padding: 5px 10px;
+      background: #000;
+      color: #ffaa00;
+      min-width: 300px;
+      text-align: left;
+      font-size: 16px;
+      font-family: monospace;
+    }
+
+    .progress-bar {
+      width: 60%;
+      margin: 20px auto;
+      background: #222;
+      border: 1px solid #00ff88;
+      height: 20px;
+      position: relative;
+    }
+
+    .progress-fill {
+      background: #00ff88;
+      height: 100%;
+      width: 0%;
+      animation: fillProgress 3s forwards;
+    }
+
+    @keyframes fillProgress {
+      to { width: 100%; }
+    }
+
+    .search-results {
+      margin-top: 20px;
+      color: #ffffff;
+      text-align: left;
     }
 
     .cursor {
@@ -53,14 +92,7 @@
     }
 
     @keyframes blink {
-      50% {
-        opacity: 0;
-      }
-    }
-
-    .search-results {
-      margin-top: 10px;
-      color: #ffffff;
+      50% { opacity: 0; }
     }
   </style>
 </head>
@@ -70,17 +102,27 @@
   <script>
     const terminalEl = document.getElementById("terminal");
 
-    const browserHTML = `
+    const candleUI = `
 <div class='browser'>
-  <div class='browser-title'>Candle Dark Web Search</div>
-  candles.onion/search?q=<span style="color:#ffaa00;">anonymous forums</span><br><br>
+  <div class='browser-title'>Candle</div>
+  <div class='search-box' id='searchBox'></div>
+</div>`;
+
+    const progressUI = `
+<div class='browser'>
+  <div class='browser-title'>Candle</div>
+  <div class='progress-bar'><div class='progress-fill'></div></div>
+</div>`;
+
+    const resultsUI = `
+<div class='browser'>
+  <div class='browser-title'>Candle</div>
   <div class='search-results'>
     [1] http://darkforumxyz123.onion - Encrypted anonymous forums<br>
     [2] http://shadowboardabc.onion - Deepweb discussion board<br>
     [3] http://onionchat456.onion - P2P chat platform<br>
   </div>
-</div>
-`;
+</div>`;
 
     const steps = [
       "user@host$ sudo protonvpn connect\n",
@@ -95,7 +137,10 @@
       "Starting Tor Browser...\nConnecting to relays:\n→ Entry Node\n→ Middle Node\n→ Exit Node\nTor Network <connected>.\n\n",
 
       "Launching Candle dark web search engine...\n",
-      "<browser>\n"
+      "<candleUI>",
+      "<searchTyping>",
+      "<progressUI>",
+      "<resultsUI>"
     ];
 
     let stepIndex = 0;
@@ -104,7 +149,6 @@
 
     function typeStep() {
       if (stepIndex >= steps.length) {
-        // Wait then restart
         setTimeout(() => {
           resetTerminal();
           typeStep();
@@ -114,9 +158,45 @@
 
       const step = steps[stepIndex];
 
-      if (step === "<browser>\n") {
+      if (step === "<candleUI>") {
         const container = document.createElement("div");
-        container.innerHTML = browserHTML;
+        container.innerHTML = candleUI;
+        terminalEl.appendChild(container);
+        terminalEl.scrollTop = terminalEl.scrollHeight;
+        stepIndex++;
+        setTimeout(typeStep, 1000);
+        return;
+      }
+
+      if (step === "<searchTyping>") {
+        const searchBox = document.getElementById("searchBox");
+        const searchText = "forums";
+        let i = 0;
+        const interval = setInterval(() => {
+          searchBox.textContent += searchText[i];
+          i++;
+          if (i === searchText.length) {
+            clearInterval(interval);
+            stepIndex++;
+            setTimeout(typeStep, 1000);
+          }
+        }, 250);
+        return;
+      }
+
+      if (step === "<progressUI>") {
+        const container = document.createElement("div");
+        container.innerHTML = progressUI;
+        terminalEl.appendChild(container);
+        terminalEl.scrollTop = terminalEl.scrollHeight;
+        stepIndex++;
+        setTimeout(typeStep, 3500);
+        return;
+      }
+
+      if (step === "<resultsUI>") {
+        const container = document.createElement("div");
+        container.innerHTML = resultsUI;
         terminalEl.appendChild(container);
         terminalEl.scrollTop = terminalEl.scrollHeight;
         stepIndex++;
@@ -137,7 +217,7 @@
 
     function resetTerminal() {
       terminalEl.innerHTML = "<span id='text'></span><span class='cursor'></span>";
-      textEl = document.getElementById("text"); // FIX: rebind the text element
+      textEl = document.getElementById("text");
       stepIndex = 0;
       charIndex = 0;
     }
