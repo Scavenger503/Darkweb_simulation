@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Terminal Dark Web Simulation - Candle Search Challenge</title>
+  <title>Dark Web Simulation - Interactive Selections</title>
   <style>
     body {
       margin: 0;
@@ -28,7 +29,7 @@
       line-height: 1.5em;
     }
 
-    .browser {
+    .browser, .warning-box, .forum-box {
       background-color: #111;
       border: 2px solid #00ff88;
       padding: 15px;
@@ -82,6 +83,34 @@
       text-align: left;
     }
 
+    .warning-box {
+      border-color: #ffaa00;
+      color: #ffaa00;
+      text-align: left;
+    }
+
+    .forum-box {
+      border-color: #00ff88;
+      color: #00ff88;
+      text-align: left;
+    }
+
+    .thread-title {
+      color: #00ffe7;
+      font-weight: bold;
+    }
+
+    .post {
+      margin-left: 2em;
+      color: #ffffff;
+    }
+
+    .reply-cursor {
+      margin-left: 2em;
+      color: #00ff88;
+      font-family: monospace;
+    }
+
     .cursor {
       display: inline-block;
       width: 10px;
@@ -120,8 +149,27 @@
   <div class='search-results'>
     [1] http://darkforumxyz123.onion - Encrypted anonymous forums<br>
     [2] http://shadowboardabc.onion - Deepweb discussion board<br>
-    [3] http://onionchat456.onion - P2P chat platform<br>
+    [3] http://onionchat456.onion - P2P chat platform<br><br>
+    <span style="color:#ffaa00;">Selected: [1] http://darkforumxyz123.onion</span>
   </div>
+</div>`;
+
+    const warningBox = `
+<div class='warning-box'>
+  Warning: This site is hosted on the Tor Network.<br>
+  Your identity is hidden, but your actions are not.<br><br>
+  [ Proceed ]   [ Cancel ]<br><br>
+  <span style="color:#00ff88;">> User selected: [ Proceed ]</span>
+</div>`;
+
+    const forumBox = `
+<div class='forum-box'>
+  <div class='thread-title'>DarkForumXYZ - Encrypted Anonymous Board</div><br>
+  [★] How to buy anonymously<br>
+  [!] Avoiding honeypots<br>
+  [!] Intro to Monero wallets<br><br>
+  <div class='post'>> anonymous42: Thanks for the Monero walkthrough.</div>
+  <div class='reply-cursor'>> <span class="cursor"></span></div>
 </div>`;
 
     const steps = [
@@ -140,7 +188,12 @@
       "<candleUI>",
       "<searchTyping>",
       "<progressUI>",
-      "<resultsUI>"
+      "<resultsUI>",
+      "candles@darkweb$ open http://darkforumxyz123.onion\n",
+      "<warning>",
+      "Proceeding to site...\n",
+      "<forum>",
+      "candles@darkweb$ logout\n"
     ];
 
     let stepIndex = 0;
@@ -201,6 +254,26 @@
         terminalEl.scrollTop = terminalEl.scrollHeight;
         stepIndex++;
         setTimeout(typeStep, 1000);
+        return;
+      }
+
+      if (step === "<warning>") {
+        const box = document.createElement("div");
+        box.innerHTML = warningBox;
+        terminalEl.appendChild(box);
+        terminalEl.scrollTop = terminalEl.scrollHeight;
+        stepIndex++;
+        setTimeout(typeStep, 2500);
+        return;
+      }
+
+      if (step === "<forum>") {
+        const box = document.createElement("div");
+        box.innerHTML = forumBox;
+        terminalEl.appendChild(box);
+        terminalEl.scrollTop = terminalEl.scrollHeight;
+        stepIndex++;
+        setTimeout(typeStep, 2500);
         return;
       }
 
